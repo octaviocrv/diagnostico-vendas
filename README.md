@@ -1,4 +1,4 @@
-# Sense House Diagnostic
+# diagnosis-sales
 
 A custom web application built with **React, Vite, and JavaScript** for a client project.
 

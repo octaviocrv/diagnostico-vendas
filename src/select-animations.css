@@ -1,0 +1,175 @@
+/* Animações premium para os selects */
+@keyframes selectSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes selectSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+}
+
+/* Estilização customizada do select trigger */
+[data-radix-select-trigger] {
+  position: relative;
+  overflow: hidden;
+}
+
+[data-radix-select-trigger]:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 45, 141, 0.03), rgba(106, 10, 54, 0.03));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+[data-radix-select-trigger]:hover:before {
+  opacity: 1;
+}
+
+[data-radix-select-trigger][data-state="open"] {
+  background: rgba(106, 10, 54, 0.95) !important;
+  border-color: rgba(255, 45, 141, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(255, 45, 141, 0.2), 0 8px 25px rgba(255, 45, 141, 0.15) !important;
+}
+
+/* Animação do ícone de seta */
+[data-radix-select-trigger] svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-radix-select-trigger][data-state="open"] svg {
+  transform: rotate(180deg);
+}
+
+/* Estilização do dropdown content */
+[data-radix-select-content] {
+  animation: selectSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.3),
+    0 10px 10px -5px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 45, 141, 0.1) !important;
+}
+
+[data-radix-select-content][data-state="closed"] {
+  animation: selectSlideOut 0.2s ease-in;
+}
+
+/* Estilização dos itens do select */
+[data-radix-select-item] {
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 2px 4px;
+  padding: 10px 12px !important;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-radix-select-item]:hover {
+  background: rgba(255, 45, 141, 0.2) !important;
+  transform: translateX(2px);
+}
+
+[data-radix-select-item][data-highlighted] {
+  background: rgba(255, 45, 141, 0.25) !important;
+  transform: translateX(2px);
+  outline: none;
+}
+
+[data-radix-select-item][data-state="checked"] {
+  background: rgba(255, 45, 141, 0.3) !important;
+  color: white !important;
+  font-weight: 500;
+}
+
+/* Animação de entrada smooth para os itens */
+[data-radix-select-item] {
+  animation: fadeInUp 0.2s ease-out;
+  animation-fill-mode: backwards;
+}
+
+[data-radix-select-item]:nth-child(1) { animation-delay: 0s; }
+[data-radix-select-item]:nth-child(2) { animation-delay: 0.05s; }
+[data-radix-select-item]:nth-child(3) { animation-delay: 0.1s; }
+[data-radix-select-item]:nth-child(4) { animation-delay: 0.15s; }
+[data-radix-select-item]:nth-child(5) { animation-delay: 0.2s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Overlay backdrop */
+[data-radix-select-content] {
+  z-index: 50;
+}
+
+/* Scroll personalizado */
+[data-radix-select-viewport] {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 45, 141, 0.3) transparent;
+}
+
+[data-radix-select-viewport]::-webkit-scrollbar {
+  width: 6px;
+}
+
+[data-radix-select-viewport]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-radix-select-viewport]::-webkit-scrollbar-thumb {
+  background: rgba(255, 45, 141, 0.3);
+  border-radius: 3px;
+}
+
+[data-radix-select-viewport]::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 45, 141, 0.5);
+}
+
+/* Estilização premium para inputs */
+input[type="text"], input[type="email"] {
+  position: relative;
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 400;
+}
+
+input[type="text"]:focus::placeholder, 
+input[type="email"]:focus::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+/* Animação smooth para inputs ao focar */
+input[type="text"], input[type="email"] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Efeito de brilho sutil nos inputs */
+input[type="text"]:focus, input[type="email"]:focus {
+  box-shadow: 
+    0 0 0 2px rgba(255, 45, 141, 0.2),
+    0 4px 12px rgba(255, 45, 141, 0.1),
+    inset 0 1px 3px rgba(255, 255, 255, 0.1) !important;
+}

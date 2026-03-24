@@ -1,4 +1,4 @@
-# diagnosis-sales
+# Sales Growth Diagnostic
 
 A custom web application built with **React, Vite, and JavaScript** for a client project.
 

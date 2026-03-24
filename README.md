@@ -2,7 +2,7 @@
 
 A custom web application built with **React, Vite, and JavaScript** for a client project.
 
-This project was developed to guide users through a structured diagnostic flow, starting with initial data capture, followed by quiz steps, and ending with a strategic result screen.
+This project delivers a multi-step diagnostic experience, including initial data capture, guided quiz steps, and a final strategic results screen.
 
 ## Tech Stack
 
@@ -12,3 +12,8 @@ This project was developed to guide users through a structured diagnostic flow, 
 - Tailwind CSS
 - shadcn/ui
 
+## Run locally
+
+```bash
+npm install
+npm run dev

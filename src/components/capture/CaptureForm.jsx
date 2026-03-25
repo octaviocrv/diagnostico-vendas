@@ -22,6 +22,25 @@ import {
 } from "lucide-react";
 
 export default function CaptureForm({ captureData, setCaptureData, onSubmit }) {
+  const maskPhone = (value) => {
+    // Remove tudo que não for número
+    const numbers = value.replace(/\D/g, '');
+    
+    // Limita a 11 dígitos
+    const limitedNumbers = numbers.slice(0, 11);
+    
+    // Aplica a máscara baseada na quantidade de dígitos
+    if (limitedNumbers.length <= 2) {
+      return limitedNumbers;
+    } else if (limitedNumbers.length <= 6) {
+      return `(${limitedNumbers.slice(0, 2)}) ${limitedNumbers.slice(2)}`;
+    } else if (limitedNumbers.length <= 10) {
+      return `(${limitedNumbers.slice(0, 2)}) ${limitedNumbers.slice(2, 6)}-${limitedNumbers.slice(6)}`;
+    } else {
+      return `(${limitedNumbers.slice(0, 2)}) ${limitedNumbers.slice(2, 7)}-${limitedNumbers.slice(7)}`;
+    }
+  };
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <CardHeader className="space-y-2 border-b border-white/5 px-8 pb-6 pt-8">
@@ -90,12 +109,14 @@ export default function CaptureForm({ captureData, setCaptureData, onSubmit }) {
                 </Label>
                 <Input
                   id="whatsapp"
+                  type="tel"
+                  maxLength={15}
                   required
                   value={captureData.whatsapp}
                   onChange={(e) =>
                     setCaptureData((prev) => ({
                       ...prev,
-                      whatsapp: e.target.value,
+                      whatsapp: maskPhone(e.target.value),
                     }))
                   }
                   placeholder="(00) 00000-0000"

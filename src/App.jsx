@@ -277,6 +277,15 @@ export default function App() {
 
             <Card className="relative z-10 w-full max-w-xl rounded-[24px] border border-white/10 bg-[#6A0A36]/95 text-white shadow-2xl backdrop-blur-xl overflow-hidden">
               
+              {/* Logo decorativo */}
+              <div className="absolute -top-8 -right-8 w-32 h-32 opacity-20 rotate-12">
+                <img 
+                  src="/logoo.jpeg" 
+                  alt="Logo" 
+                  className="w-full h-full object-contain filter brightness-200"
+                />
+              </div>
+              
               {screen === 'capture' ? (
                 /* --- TELA 1: CAPTURA --- */
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -347,6 +356,30 @@ export default function App() {
                         Iniciar Diagnóstico
                         <ArrowRight className="h-5 w-5" />
                       </button>
+
+                      {/* Benefícios */}
+                      <div className="mt-6 grid grid-cols-3 gap-4 text-center">
+                        <div className="flex flex-col items-center">
+                          <div className="mb-2 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                            <CheckCircle2 className="h-4 w-4 text-[#F5C6D6]" />
+                          </div>
+                          <span className="text-xs text-white/80 font-medium">Certificado</span>
+                        </div>
+                        
+                        <div className="flex flex-col items-center">
+                          <div className="mb-2 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                            <Clock3 className="h-4 w-4 text-[#F5C6D6]" />
+                          </div>
+                          <span className="text-xs text-white/80 font-medium">Resultado imediato</span>
+                        </div>
+                        
+                        <div className="flex flex-col items-center">
+                          <div className="mb-2 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                            <CircleCheck className="h-4 w-4 text-[#F5C6D6]" />
+                          </div>
+                          <span className="text-xs text-white/80 font-medium">Gratuito</span>
+                        </div>
+                      </div>
                     </form>
                   </CardContent>
                 </div>

@@ -15,6 +15,7 @@ export default function App() {
   })
   const [answers, setAnswers] = useState({})
   const [results, setResults] = useState(null)
+  const [showStrategic, setShowStrategic] = useState(false)
 
   // Todas as 10 perguntas originais restauradas
   const quizQuestions = [
@@ -193,6 +194,11 @@ export default function App() {
     const calculatedResults = calculateResults()
     setResults(calculatedResults)
     setScreen('result')
+    
+    // Transição automática para o Raio-X Estratégico após 3.5s
+    setTimeout(() => {
+      setShowStrategic(true)
+    }, 3500)
   }
 
   const currentQuestion = quizQuestions[quizStep - 1]
@@ -402,57 +408,192 @@ export default function App() {
                 </div>
               ) : (
 
-                /* --- TELA 3: RESULTADO --- */
-                <div className="animate-in fade-in zoom-in-95 duration-700">
+                /* --- TELA 3: RESULTADO RESUMIDO --- */
+                <div className={`transition-all duration-1000 ${showStrategic ? 'animate-out fade-out zoom-out-95' : 'animate-in fade-in zoom-in-95'} duration-700`}>
                   <CardHeader className="text-center space-y-4 border-b border-white/5 px-8 pb-8 pt-10">
                     <div className="mx-auto w-16 h-16 bg-[#FF2D8D]/10 rounded-full flex items-center justify-center mb-2">
-                      <Target className="h-8 w-8 text-[#FF2D8D]" />
+                      <CheckCircle2 className="h-8 w-8 text-[#FF2D8D]" />
                     </div>
-                    <CardTitle className="text-3xl font-black text-white">
-                      Seu Raio-X Estratégico
+                    <CardTitle className="text-2xl font-bold text-white">
+                      Diagnóstico Concluído
                     </CardTitle>
-                    <CardDescription className="text-base text-[#F5C6D6] font-light max-w-sm mx-auto">
-                      {captureData.nome}, analisamos a operação da <strong className="font-bold text-white">{captureData.empresa}</strong>.
+                    <CardDescription className="text-sm text-[#F5C6D6] font-light max-w-sm mx-auto">
+                      Processando sua análise estratégica...
                     </CardDescription>
                   </CardHeader>
 
-                  <CardContent className="px-8 py-8 space-y-8">
+                  <CardContent className="px-8 py-8">
                     {results && (
-                      <>
-                        <div className="flex flex-col md:flex-row gap-4">
-                          <div className="flex-1 bg-white/5 rounded-2xl p-6 border border-white/5 text-center">
-                            <p className="text-sm text-white/60 mb-1 font-medium">Maturidade Atual</p>
-                            <div className="text-4xl font-black text-white">{results.scoreNota}<span className="text-xl text-white/40">/10</span></div>
-                            <p className="text-xs text-[#FF2D8D] mt-2 font-bold">{results.maturityTitle}</p>
+                      <div className="text-center space-y-6">
+                        <div className="bg-white/5 rounded-2xl p-6">
+                          <div className="text-3xl font-black text-white mb-2">{results.scoreNota}<span className="text-lg text-white/40">/10</span></div>
+                          <p className="text-sm text-[#FF2D8D] font-bold">{results.maturityTitle}</p>
+                          <p className="text-xs text-white/60 mt-2">{results.potentialPercent}% de potencial inexplorado</p>
+                        </div>
+                        
+                        <div className="flex items-center justify-center space-x-2 text-white/40">
+                          <div className="w-2 h-2 bg-[#FF2D8D] rounded-full animate-pulse"></div>
+                          <div className="w-2 h-2 bg-[#FF2D8D] rounded-full animate-pulse animation-delay-200"></div>
+                          <div className="w-2 h-2 bg-[#FF2D8D] rounded-full animate-pulse animation-delay-400"></div>
+                        </div>
+                        
+                        <p className="text-xs text-white/50 font-light">
+                          Preparando seu raio-X estratégico completo...
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </div>
+              )}
+            </Card>
+          
+          {/* TELA ESTRATÉGICA - OVERLAY FULL SCREEN */}
+          {showStrategic && (
+            <div className="fixed inset-0 bg-[#F9F6F0] z-50 animate-in fade-in slide-in-from-bottom-4 duration-1000 overflow-y-auto">
+              <div className="min-h-screen py-12 px-6">
+                <div className="max-w-4xl mx-auto">
+                  
+                  {/* Header Estratégico */}
+                  <div className="text-center mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                    <div className="inline-flex items-center gap-3 mb-6">
+                      <div className="w-3 h-3 bg-[#FF2D8D] rounded-full"></div>
+                      <span className="text-sm uppercase tracking-[0.2em] text-[#5A002B] font-bold">RELATÓRIO ESTRATÉGICO</span>
+                      <div className="w-3 h-3 bg-[#FF2D8D] rounded-full"></div>
+                    </div>
+                    
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#5A002B] mb-4 leading-tight">
+                      Seu Raio-X Estratégico
+                    </h1>
+                    
+                    <p className="text-lg md:text-xl text-[#5A002B]/80 font-normal max-w-2xl mx-auto leading-relaxed">
+                      <strong className="font-bold">{captureData.nome}</strong>, analisamos a operação da 
+                      <strong className="font-bold text-[#FF2D8D]"> {captureData.empresa}</strong> e identificamos 
+                      os pontos críticos para acelerar o crescimento.
+                    </p>
+                  </div>
+
+                  {results && (
+                    <div className="space-y-8">
+                      
+                      {/* Cards Principais */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500">
+                        
+                        {/* Maturidade Atual */}
+                        <div className="bg-white rounded-3xl p-8 border border-[#5A002B]/5 shadow-2xl">
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 bg-[#5A002B]/10 rounded-full flex items-center justify-center">
+                              <Target className="h-5 w-5 text-[#5A002B]" />
+                            </div>
+                            <h3 className="text-lg font-bold text-[#5A002B]">Maturidade Atual</h3>
                           </div>
                           
-                          <div className="flex-1 bg-[#FF2D8D]/10 rounded-2xl p-6 border border-[#FF2D8D]/20 text-center relative overflow-hidden">
-                            <AlertCircle className="absolute -right-4 -bottom-4 h-24 w-24 text-[#FF2D8D]/10" />
-                            <p className="text-sm text-[#F5C6D6] mb-1 font-medium">Gap de Crescimento</p>
-                            <div className="text-4xl font-black text-[#FF2D8D]">{results.potentialPercent}%</div>
-                            <p className="text-xs text-[#F5C6D6]/70 mt-2 font-normal">potencial inexplorado</p>
+                          <div className="text-center">
+                            <div className="text-5xl font-black text-[#5A002B] mb-2">
+                              {results.scoreNota}<span className="text-2xl text-[#5A002B]/50">/10</span>
+                            </div>
+                            <div className="inline-flex items-center gap-2 bg-[#5A002B]/5 rounded-full px-4 py-2">
+                              <div className={`w-2 h-2 rounded-full ${
+                                results.scorePercent <= 35 ? 'bg-red-500' :
+                                results.scorePercent <= 60 ? 'bg-orange-500' :
+                                results.scorePercent <= 80 ? 'bg-yellow-500' : 'bg-green-500'
+                              }`}></div>
+                              <span className="text-sm font-bold text-[#5A002B]">{results.maturityTitle}</span>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="bg-[#6A0A36] rounded-2xl p-6 border border-[#FF2D8D]/30 relative">
-                          <div className="absolute top-0 left-6 -translate-y-1/2 bg-[#FF2D8D] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                            Ponto de Atenção
+                        {/* Gap de Crescimento */}
+                        <div className="bg-gradient-to-br from-[#FF2D8D]/10 to-[#FF2D8D]/5 rounded-3xl p-8 border border-[#FF2D8D]/20 shadow-2xl relative overflow-hidden">
+                          <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-[#FF2D8D]/5 rounded-full"></div>
+                          
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 bg-[#FF2D8D]/10 rounded-full flex items-center justify-center">
+                              <TrendingUp className="h-5 w-5 text-[#FF2D8D]" />
+                            </div>
+                            <h3 className="text-lg font-bold text-[#5A002B]">Gap de Crescimento</h3>
                           </div>
-                          <h3 className="text-white/70 text-sm font-medium mb-1 mt-2">Seu principal obstáculo hoje é:</h3>
-                          <p className="text-xl font-bold text-white mb-4">{results.bottleneck}</p>
-                          <p className="text-[#F5C6D6] text-sm leading-relaxed font-light border-t border-white/10 pt-4">
-                            {results.maturityDescription}
+                          
+                          <div className="text-center relative z-10">
+                            <div className="text-5xl font-black text-[#FF2D8D] mb-2">{results.potentialPercent}%</div>
+                            <p className="text-sm text-[#5A002B]/70 font-medium">potencial inexplorado identificado</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Ponto de Atenção */}
+                      <div className="bg-[#5A002B] rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700 delay-700">
+                        <div className="absolute -right-12 -top-12 w-40 h-40 bg-[#FF2D8D]/10 rounded-full"></div>
+                        
+                        <div className="relative z-10">
+                          <div className="inline-flex items-center gap-2 bg-[#FF2D8D]/20 rounded-full px-4 py-2 mb-6">
+                            <AlertCircle className="h-4 w-4 text-[#FF2D8D]" />
+                            <span className="text-sm font-bold text-[#FF2D8D] uppercase tracking-wider">Ponto de Atenção</span>
+                          </div>
+                          
+                          <h3 className="text-sm text-white/70 font-medium mb-2">Seu principal obstáculo hoje é:</h3>
+                          <p className="text-2xl md:text-3xl font-bold text-white mb-6 leading-tight">{results.bottleneck}</p>
+                          
+                          <div className="border-t border-white/10 pt-6">
+                            <h4 className="text-sm font-bold text-[#FF2D8D] mb-3">LEITURA ESTRATÉGICA:</h4>
+                            <p className="text-white/90 leading-relaxed font-light">
+                              {results.maturityDescription}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Benefícios e CTA */}
+                      <div className="bg-white rounded-3xl p-8 border border-[#5A002B]/5 shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-900">
+                        <div className="text-center mb-8">
+                          <h3 className="text-2xl font-bold text-[#5A002B] mb-4">Próximos Passos Estratégicos</h3>
+                          <p className="text-[#5A002B]/70 max-w-xl mx-auto leading-relaxed">
+                            Com base no diagnóstico, definimos um plano de ação personalizado para destravar 
+                            o crescimento da <strong>{captureData.empresa}</strong>.
                           </p>
                         </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                          <div className="text-center p-4">
+                            <div className="w-12 h-12 bg-[#FF2D8D]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                              <CheckCircle2 className="h-6 w-6 text-[#FF2D8D]" />
+                            </div>
+                            <p className="text-xs font-bold text-[#5A002B]">Análise Aprofundada</p>
+                          </div>
+                          
+                          <div className="text-center p-4">
+                            <div className="w-12 h-12 bg-[#FF2D8D]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                              <Target className="h-6 w-6 text-[#FF2D8D]" />
+                            </div>
+                            <p className="text-xs font-bold text-[#5A002B]">Direcionamento Estratégico</p>
+                          </div>
+                          
+                          <div className="text-center p-4">
+                            <div className="w-12 h-12 bg-[#FF2D8D]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                              <AlertCircle className="h-6 w-6 text-[#FF2D8D]" />
+                            </div>
+                            <p className="text-xs font-bold text-[#5A002B]">Clareza sobre Prioridades</p>
+                          </div>
+                          
+                          <div className="text-center p-4">
+                            <div className="w-12 h-12 bg-[#FF2D8D]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                              <TrendingUp className="h-6 w-6 text-[#FF2D8D]" />
+                            </div>
+                            <p className="text-xs font-bold text-[#5A002B]">Plano de Evolução</p>
+                          </div>
+                        </div>
 
-                        <div className="pt-2 space-y-4">
+                        <div className="space-y-4">
                           <button
                             type="button"
-                            onClick={() => alert('Em breve! Encaminhamento para WhatsApp.')}
-                            className="flex h-14 w-full items-center justify-center gap-3 rounded-xl bg-white text-[#5A002B] transition-all hover:bg-gray-100 hover:scale-[1.02] active:scale-[0.98] font-black shadow-xl"
+                            onClick={() => {
+                              // TODO: Integrar com WhatsApp
+                              console.log('Dados para WhatsApp:', { captureData, results })
+                              alert('Em breve! Redirecionamento para WhatsApp será implementado.')
+                            }}
+                            className="flex h-16 w-full items-center justify-center gap-4 rounded-2xl bg-[#FF2D8D] px-8 text-white transition-all hover:bg-[#e61e7a] hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-[#FF2D8D]/20 font-black text-lg"
                           >
-                            <MessageCircle className="h-5 w-5" />
-                            Discutir meu Plano de Ação
+                            <MessageCircle className="h-6 w-6" />
+                            Quero Destravar meu Crescimento
                           </button>
                           
                           <div className="text-center">
@@ -462,19 +603,22 @@ export default function App() {
                                 setScreen('capture')
                                 setQuizStep(1)
                                 setAnswers({})
+                                setResults(null)
+                                setShowStrategic(false)
                               }}
-                              className="text-xs text-white/40 hover:text-white transition-colors font-medium underline underline-offset-4"
+                              className="text-sm text-[#5A002B]/50 hover:text-[#5A002B] transition-colors font-medium"
                             >
-                              Refazer diagnóstico
+                              ← Fazer novo diagnóstico
                             </button>
                           </div>
                         </div>
-                      </>
-                    )}
-                  </CardContent>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </Card>
+              </div>
+            </div>
+          )}
           </div>
         </div>
       </main>

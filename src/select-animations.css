@@ -173,3 +173,47 @@ input[type="text"]:focus, input[type="email"]:focus {
     0 4px 12px rgba(255, 45, 141, 0.1),
     inset 0 1px 3px rgba(255, 255, 255, 0.1) !important;
 }
+
+/* Animações para transição estratégica */
+@keyframes strategicReveal {
+  from {
+    opacity: 0;
+    transform: translateY(60px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animação de loading dots */
+@keyframes pulse-delay-200 {
+  0%, 20% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+@keyframes pulse-delay-400 {
+  0%, 40% { opacity: 0.3; }
+  70% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms;
+}

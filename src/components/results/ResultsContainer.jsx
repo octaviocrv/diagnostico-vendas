@@ -1,61 +1,144 @@
+import { useEffect, useState } from "react";
 import {
-  Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { CheckCircle2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
+
+const loadingTexts = [
+  "Mapeando a maturidade da sua operação...",
+  "Identificando gargalos invisíveis no seu processo...",
+  "Cruzando respostas com padrões de mercado premium...",
+  "Calculando seu volume de potencial inexplorado...",
+  "Finalizando a montagem do seu raio-X estratégico...",
+];
 
 export default function ResultsContainer({ results, showStrategic }) {
+  const [isAnalyzing, setIsAnalyzing] = useState(true);
+  const [loadingTextIndex, setLoadingTextIndex] = useState(0);
+
+  useEffect(() => {
+    const textInterval = setInterval(() => {
+      setLoadingTextIndex((prev) => {
+        if (prev >= loadingTexts.length - 1) {
+          clearInterval(textInterval);
+          return prev;
+        }
+
+        return prev + 1;
+      });
+    }, 1500);
+
+    const finishTimeout = setTimeout(() => {
+      setIsAnalyzing(false);
+    }, 7500);
+
+    return () => {
+      clearInterval(textInterval);
+      clearTimeout(finishTimeout);
+    };
+  }, []);
+
   return (
     <div
-      className={`transition-all duration-1000 ${
-        showStrategic 
-          ? "animate-out fade-out zoom-out-95" 
+      className={`relative overflow-hidden rounded-[2.25rem] border border-[#FF4AA2]/30 bg-[radial-gradient(circle_at_top,_rgba(255,61,150,0.16),_rgba(106,10,54,0.96)_42%,_rgba(74,0,36,1)_100%)] shadow-[0_0_22px_rgba(255,45,141,0.34),0_0_80px_rgba(255,45,141,0.22)] transition-all duration-1000 ${
+        showStrategic
+          ? "animate-out fade-out zoom-out-95"
           : "animate-in fade-in zoom-in-95"
-      } duration-700`}
+      }`}
     >
-      <CardHeader className="text-center space-y-4 border-b border-white/5 px-8 pb-8 pt-10">
-        <div className="mx-auto w-16 h-16 bg-[#FF2D8D]/10 rounded-full flex items-center justify-center mb-2">
-          <CheckCircle2 className="h-8 w-8 text-[#FF2D8D]" />
-        </div>
-        <CardTitle className="text-2xl font-bold text-white">
-          Diagnóstico Concluído
-        </CardTitle>
-        <CardDescription className="text-sm text-[#F5C6D6] font-light max-w-sm mx-auto">
-          Processando sua análise estratégica...
-        </CardDescription>
-      </CardHeader>
+      {/* brilho externo */}
+      <div className="pointer-events-none absolute inset-[-1px] rounded-[2.25rem] ring-1 ring-[#FF7ABA]/20" />
+      <div className="pointer-events-none absolute -left-10 -right-10 -top-10 h-24 bg-[#FF4AA2]/15 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-10 left-1/2 h-24 w-[65%] -translate-x-1/2 rounded-full bg-[#FF4AA2]/20 blur-3xl" />
 
-      <CardContent className="px-8 py-8">
-        {results && (
-          <div className="text-center space-y-6">
-            <div className="bg-white/5 rounded-2xl p-6">
-              <div className="text-3xl font-black text-white mb-2">
-                {results.scoreNota}
-                <span className="text-lg text-white/40">/10</span>
-              </div>
-              <p className="text-sm text-[#FF2D8D] font-bold">
-                {results.maturityTitle}
-              </p>
-              <p className="text-xs text-white/60 mt-2">
-                {results.potentialPercent}% de potencial inexplorado
-              </p>
-            </div>
+      {isAnalyzing ? (
+        <div className="relative z-10 flex min-h-[420px] flex-col items-center justify-center px-8 py-16 text-center sm:px-12">
+          <div className="mb-8 rounded-full p-2">
+            <Loader2 className="h-16 w-16 animate-spin text-[#FF2D8D]" />
+          </div>
 
-            <div className="flex items-center justify-center space-x-2 text-white/40">
-              <div className="w-2 h-2 bg-[#FF2D8D] rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-[#FF2D8D] rounded-full animate-pulse animation-delay-200"></div>
-              <div className="w-2 h-2 bg-[#FF2D8D] rounded-full animate-pulse animation-delay-400"></div>
-            </div>
+          <h3 className="mb-4 text-[30px] font-black tracking-tight text-white sm:text-[34px]">
+            Processando Diagnóstico
+          </h3>
 
-            <p className="text-xs text-white/50 font-light">
-              Preparando seu raio-X estratégico completo...
+          <div className="mb-10 h-7 overflow-hidden">
+            <p
+              key={loadingTextIndex}
+              className="animate-in slide-in-from-bottom-4 fade-in text-sm font-medium text-[#FFD2E5] duration-500 sm:text-base"
+            >
+              {loadingTexts[loadingTextIndex]}
             </p>
           </div>
-        )}
-      </CardContent>
+
+          <div className="h-1.5 w-full max-w-[320px] overflow-hidden rounded-full bg-white/10">
+            <div className="h-full w-1/2 rounded-full bg-[#FF2D8D] shadow-[0_0_12px_rgba(255,45,141,0.85)] animate-[shimmer_2s_infinite] bg-[length:200%_100%]" />
+          </div>
+        </div>
+      ) : (
+        <div className="animate-in fade-in zoom-in-95 relative z-10 duration-1000">
+          <CardHeader className="space-y-4 border-b border-white/8 px-8 pb-6 pt-10 text-center sm:px-10">
+            <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-full border border-[#FF4AA2]/25 bg-[#FF2D8D]/12 shadow-[0_0_30px_rgba(255,45,141,0.28)]">
+              <Sparkles className="h-8 w-8 text-[#FF2D8D]" />
+            </div>
+
+            <CardTitle className="text-2xl font-black tracking-tight text-white sm:text-3xl">
+              Raio-X Estratégico Concluído
+            </CardTitle>
+
+            <CardDescription className="mx-auto max-w-sm text-sm font-medium text-[#F5C6D6]/80">
+              Sua operação foi analisada com sucesso.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="px-8 py-8 sm:px-10">
+            {results ? (
+              <div className="space-y-8 text-center">
+                <div className="relative overflow-hidden rounded-[1.75rem] border border-white/8 bg-black/15 p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-all duration-500 hover:scale-[1.01]">
+                  <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-[#FF4AA2] to-transparent opacity-80" />
+
+                  <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-white/50">
+                    Nível de Maturidade Atual
+                  </p>
+
+                  <div className="mb-4 flex items-baseline justify-center gap-1">
+                    <span className="text-7xl font-black tracking-tighter text-white sm:text-8xl">
+                      {results.scoreNota ?? "-"}
+                    </span>
+                    <span className="text-3xl font-bold text-white/30">/10</span>
+                  </div>
+
+                  <div className="inline-flex items-center rounded-full border border-[#FF2D8D]/30 bg-[#FF2D8D]/10 px-6 py-2 shadow-[0_0_15px_rgba(255,45,141,0.1)]">
+                    <p className="text-base font-bold uppercase tracking-wide text-[#FF5BA8]">
+                      {results.maturityTitle ?? "Sem classificação"}
+                    </p>
+                  </div>
+
+                  <div className="mt-8 border-t border-white/6 pt-6">
+                    <p className="text-sm font-medium leading-relaxed text-white/70 sm:text-base">
+                      Detectamos{" "}
+                      <span className="mx-1 inline-block rounded-md bg-[#FF2D8D]/20 px-2 py-1 text-lg font-black text-white">
+                        {results.potentialPercent ?? 0}%
+                      </span>{" "}
+                      de potencial inexplorado no seu negócio.
+                    </p>
+                  </div>
+                </div>
+
+                <p className="text-xs font-light text-white/40">
+                  Prepare-se para o direcionamento estratégico na próxima etapa.
+                </p>
+              </div>
+            ) : (
+              <p className="text-center text-sm text-white/60">
+                Não foi possível carregar os resultados.
+              </p>
+            )}
+          </CardContent>
+        </div>
+      )}
     </div>
   );
 }

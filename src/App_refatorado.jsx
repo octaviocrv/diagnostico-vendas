@@ -36,32 +36,28 @@ export default function App() {
   const [showStrategic, setShowStrategic] = useState(false);
   const [leadId, setLeadId] = useState(null);
 
-  // Event handlers
   const handleCaptureSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validação antes do envio
+
     if (!captureData.nome || !captureData.email) {
-      alert('Por favor, preencha nome e email para continuar.');
+      alert("Por favor, preencha nome e email para continuar.");
       return;
     }
-    
-    // Enviar evento: lead_started e gerar lead_id
+
     const generatedLeadId = await trackLeadStarted(captureData);
-    
+
     if (generatedLeadId) {
       setLeadId(generatedLeadId);
       setScreen("quiz");
     } else {
-      console.error('Falha ao iniciar diagnóstico - lead_id não gerado');
-      alert('Erro interno. Tente novamente.');
+      console.error("Falha ao iniciar diagnóstico - lead_id não gerado");
+      alert("Erro interno. Tente novamente.");
     }
   };
 
   const handleAnswerSelect = (value) => {
     setAnswers((prev) => ({ ...prev, [quizStep]: value }));
 
-    // Se for a última pergunta, não avança automaticamente
     if (quizStep >= quizQuestions.length) {
       return;
     }
@@ -72,56 +68,56 @@ export default function App() {
   };
 
   const handlePrevQuestion = () => {
-    if (quizStep > 1) setQuizStep(quizStep - 1);
+    if (quizStep > 1) {
+      setQuizStep(quizStep - 1);
+    }
   };
 
   const handleFinishQuiz = async () => {
-    // Validação de integridade antes de calcular
     if (Object.keys(answers).length === 0) {
-      console.error('Nenhuma resposta encontrada');
+      console.error("Nenhuma resposta encontrada");
       return;
     }
 
     const calculatedResults = calculateResults(answers);
-    
-    // Validação dos resultados calculados - CORREÇÃO DA LÓGICA
+
     if (!calculatedResults || calculatedResults.totalScore === undefined) {
-      console.error('Falha no cálculo dos resultados');
+      console.error("Falha no cálculo dos resultados");
       return;
     }
-    
+
     setResults(calculatedResults);
-    
-    // Enviar evento: quiz_completed com validação
-    await trackQuizCompleted(captureData, answers, calculatedResults, quizQuestions, leadId);
-    
+
+    await trackQuizCompleted(
+      captureData,
+      answers,
+      calculatedResults,
+      quizQuestions,
+      leadId,
+    );
+
     setScreen("result");
 
-    // Transição automática para o Raio-X Estratégico após 3.5s
     setTimeout(() => {
       setShowStrategic(true);
     }, 3500);
   };
 
   const handleContactClick = async () => {
-    // Validação antes do envio do CTA
     if (!results || !leadId) {
-      console.error('Dados insuficientes para envio do CTA');
+      console.error("Dados insuficientes para envio do CTA");
       return;
     }
-    
-    // Enviar evento: result_cta_clicked
+
     await trackResultCtaClicked(captureData, results, leadId);
-    
-    // TODO: Integrar com WhatsApp
+
     console.log("Dados para WhatsApp:", {
       captureData,
       results,
       leadId,
     });
-    alert(
-      "Em breve! Redirecionamento para WhatsApp será implementado.",
-    );
+
+    alert("Em breve! Redirecionamento para WhatsApp será implementado.");
   };
 
   const handleRestartDiagnosis = () => {
@@ -131,36 +127,37 @@ export default function App() {
     setResults(null);
     setShowStrategic(false);
     setLeadId(null);
-    
-    // Reset do controle de sessão para permitir novo lead_started
+
     resetSessionControl();
   };
 
+  const isResultScreen = screen === "result";
+
   return (
-    <div className="min-h-screen bg-[#F9F6F0] text-[#5A002B] flex flex-col font-sans">
+    <div className="flex min-h-screen flex-col bg-[#F9F6F0] font-sans text-[#5A002B]">
       <Header />
 
       <main className="flex-1">
         <div className="mx-auto flex min-h-[calc(100vh-80px)] max-w-[1400px] flex-col lg:flex-row">
-          {/* Seção Esquerda - Conteúdo principal */}
+          {/* Seção Esquerda */}
           <div className="flex w-full flex-col justify-center p-8 lg:w-1/2 lg:p-16 xl:p-24">
             <div className="mb-10 max-w-xl">
-              <p className="mb-4 text-xs uppercase tracking-[0.2em] text-[#FF2D8D] font-bold">
+              <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#FF2D8D]">
                 Diagnóstico Estratégico de Crescimento
               </p>
 
-              <h1 className="text-3xl leading-tight sm:text-4xl lg:text-5xl font-black text-[#5A002B]">
-                O que está travando <br />
-                o crescimento <br />
+              <h1 className="text-4xl font-black leading-tight text-[#5A002B] sm:text-5xl lg:text-6xl">
+                Descubra o que está travando{" "}
+                <br className="hidden lg:block" />
                 <span className="relative mt-2 inline-block text-[#FF2D8D]">
-                  da sua empresa hoje?
+                  o crescimento da sua empresa.
                 </span>
               </h1>
 
-              <p className="mt-6 text-lg leading-relaxed text-[#5A002B]/80 font-normal">
+              <p className="mt-6 text-lg font-normal leading-relaxed text-[#5A002B]/80">
                 Mapeie o nível de maturidade da sua operação, identifique
                 gargalos invisíveis e descubra onde sua empresa está perdendo
-                crescimento em menos de 3 minutos.
+                oportunidades de crescimento em menos de 3 minutos.
               </p>
             </div>
 
@@ -168,19 +165,19 @@ export default function App() {
               <img
                 src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop"
                 alt="Escritório premium"
-                className="h-40 w-full rounded-2xl object-cover shadow-sm opacity-90"
+                className="h-40 w-full rounded-2xl object-cover opacity-90 shadow-sm"
               />
               <img
                 src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop"
                 alt="Reunião estratégica"
-                className="-mt-8 h-48 w-full rounded-2xl object-cover shadow-sm opacity-90"
+                className="-mt-8 h-48 w-full rounded-2xl object-cover opacity-90 shadow-sm"
               />
             </div>
           </div>
 
-          {/* Seção Direita - Formulários e Quiz */}
+          {/* Seção Direita */}
           <div
-            className="relative flex w-full items-center justify-center p-6 lg:w-1/2 lg:p-12"
+            className="relative flex w-full items-center justify-center overflow-hidden p-6 lg:w-1/2 lg:p-12"
             style={{
               backgroundColor: "#5A002B",
               backgroundImage: `url(${fundoCard})`,
@@ -191,46 +188,54 @@ export default function App() {
           >
             <div className="absolute inset-0 bg-[#5A002B]/40 mix-blend-multiply" />
 
-            <Card className="relative z-10 w-full max-w-xl rounded-[24px] border border-white/10 bg-[#6A0A36]/95 text-white shadow-2xl backdrop-blur-xl overflow-hidden">
-              {/* Logo */}
-              <div className="absolute -top-8 -right-8 w-32 h-32 opacity-20 rotate-12">
-                <img
-                  src="/logoo.jpeg"
-                  alt="Logo"
-                  className="w-full h-full object-contain filter brightness-200"
-                />
+            {/* Glow de fundo para a etapa de resultado */}
+            {isResultScreen && !showStrategic && (
+              <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">
+                <div className="h-[460px] w-[92%] max-w-[940px] rounded-[42px] bg-[#FF2D8D]/12 blur-3xl" />
               </div>
+            )}
 
-              {/* Renderização condicional das telas */}
-              {screen === "capture" && (
-                <CaptureForm 
-                  captureData={captureData}
-                  setCaptureData={setCaptureData}
-                  onSubmit={handleCaptureSubmit}
-                />
-              )}
+            {!isResultScreen && (
+              <Card className="relative z-10 w-full max-w-xl overflow-hidden rounded-[24px] border border-white/10 bg-[#6A0A36]/95 text-white shadow-2xl backdrop-blur-xl">
+                <div className="absolute -right-8 -top-8 h-32 w-32 rotate-12 opacity-20">
+                  <img
+                    src="/logoo.jpeg"
+                    alt="Logo"
+                    className="h-full w-full object-contain brightness-200"
+                  />
+                </div>
 
-              {screen === "quiz" && (
-                <QuizContainer
-                  quizStep={quizStep}
-                  answers={answers}
-                  onAnswerSelect={handleAnswerSelect}
-                  onPrevQuestion={handlePrevQuestion}
-                  onFinishQuiz={handleFinishQuiz}
-                />
-              )}
+                {screen === "capture" && (
+                  <CaptureForm
+                    captureData={captureData}
+                    setCaptureData={setCaptureData}
+                    onSubmit={handleCaptureSubmit}
+                  />
+                )}
 
-              {screen === "result" && (
-                <ResultsContainer 
+                {screen === "quiz" && (
+                  <QuizContainer
+                    quizStep={quizStep}
+                    answers={answers}
+                    onAnswerSelect={handleAnswerSelect}
+                    onPrevQuestion={handlePrevQuestion}
+                    onFinishQuiz={handleFinishQuiz}
+                  />
+                )}
+              </Card>
+            )}
+
+            {isResultScreen && (
+              <div className="relative z-10 w-full max-w-[940px]">
+                <ResultsContainer
                   results={results}
                   showStrategic={showStrategic}
                 />
-              )}
-            </Card>
+              </div>
+            )}
 
-            {/* Relatório Estratégico */}
             {showStrategic && (
-              <StrategicReport 
+              <StrategicReport
                 captureData={captureData}
                 results={results}
                 onContactClick={handleContactClick}

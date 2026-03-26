@@ -467,7 +467,7 @@ export default function App() {
                         type="submit"
                         className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#FF2D8D] px-6 text-white font-bold transition-all hover:bg-[#e61e7a] hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-[#FF2D8D]/20"
                       >
-                        Iniciar Diagnóstico
+                        
                         <ArrowRight className="h-5 w-5" />
                       </button>
 

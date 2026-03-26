@@ -3,7 +3,9 @@ export default function QuizQuestion({
   selectedAnswer, 
   onAnswerSelect, 
   onPrevQuestion, 
-  canGoBack 
+  canGoBack,
+  isLastQuestion,
+  onFinishQuiz 
 }) {
   return (
     <div className="space-y-8 px-8 py-8">
@@ -40,7 +42,19 @@ export default function QuizQuestion({
         ))}
       </div>
 
-      <div className="pt-2">
+      <div className="pt-2 space-y-4">
+        {/* Botão Finalizar Quiz - apenas na última pergunta */}
+        {isLastQuestion && selectedAnswer && (
+          <button
+            type="button"
+            onClick={onFinishQuiz}
+            className="w-full bg-[#FF2D8D] hover:bg-[#FF2D8D]/90 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-lg hover:shadow-[0_0_20px_rgba(255,45,141,0.3)]"
+          >
+            Finalizar Quiz
+          </button>
+        )}
+        
+        {/* Botão Voltar */}
         <button
           type="button"
           onClick={onPrevQuestion}

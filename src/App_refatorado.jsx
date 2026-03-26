@@ -14,6 +14,12 @@ import StrategicReport from "./components/results/StrategicReport";
 // Data and utilities
 import { quizQuestions } from "./data/quizQuestions";
 import { calculateResults } from "./utils/calculateResults";
+import {
+  trackLeadStarted,
+  trackQuizCompleted,
+  trackResultCtaClicked,
+  resetSessionControl,
+} from "./utils/webhookService";
 
 export default function App() {
   const [screen, setScreen] = useState("capture");
@@ -28,22 +34,40 @@ export default function App() {
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState(null);
   const [showStrategic, setShowStrategic] = useState(false);
+  const [leadId, setLeadId] = useState(null);
 
   // Event handlers
-  const handleCaptureSubmit = (e) => {
+  const handleCaptureSubmit = async (e) => {
     e.preventDefault();
-    setScreen("quiz");
+    
+    // Validação antes do envio
+    if (!captureData.nome || !captureData.email) {
+      alert('Por favor, preencha nome e email para continuar.');
+      return;
+    }
+    
+    // Enviar evento: lead_started e gerar lead_id
+    const generatedLeadId = await trackLeadStarted(captureData);
+    
+    if (generatedLeadId) {
+      setLeadId(generatedLeadId);
+      setScreen("quiz");
+    } else {
+      console.error('Falha ao iniciar diagnóstico - lead_id não gerado');
+      alert('Erro interno. Tente novamente.');
+    }
   };
 
   const handleAnswerSelect = (value) => {
     setAnswers((prev) => ({ ...prev, [quizStep]: value }));
 
+    // Se for a última pergunta, não avança automaticamente
+    if (quizStep >= quizQuestions.length) {
+      return;
+    }
+
     setTimeout(() => {
-      if (quizStep < quizQuestions.length) {
-        setQuizStep((prev) => prev + 1);
-      } else {
-        handleFinishQuiz();
-      }
+      setQuizStep((prev) => prev + 1);
     }, 450);
   };
 
@@ -51,9 +75,26 @@ export default function App() {
     if (quizStep > 1) setQuizStep(quizStep - 1);
   };
 
-  const handleFinishQuiz = () => {
+  const handleFinishQuiz = async () => {
+    // Validação de integridade antes de calcular
+    if (Object.keys(answers).length === 0) {
+      console.error('Nenhuma resposta encontrada');
+      return;
+    }
+
     const calculatedResults = calculateResults(answers);
+    
+    // Validação dos resultados calculados - CORREÇÃO DA LÓGICA
+    if (!calculatedResults || calculatedResults.totalScore === undefined) {
+      console.error('Falha no cálculo dos resultados');
+      return;
+    }
+    
     setResults(calculatedResults);
+    
+    // Enviar evento: quiz_completed com validação
+    await trackQuizCompleted(captureData, answers, calculatedResults, quizQuestions, leadId);
+    
     setScreen("result");
 
     // Transição automática para o Raio-X Estratégico após 3.5s
@@ -62,11 +103,21 @@ export default function App() {
     }, 3500);
   };
 
-  const handleContactClick = () => {
+  const handleContactClick = async () => {
+    // Validação antes do envio do CTA
+    if (!results || !leadId) {
+      console.error('Dados insuficientes para envio do CTA');
+      return;
+    }
+    
+    // Enviar evento: result_cta_clicked
+    await trackResultCtaClicked(captureData, results, leadId);
+    
     // TODO: Integrar com WhatsApp
     console.log("Dados para WhatsApp:", {
       captureData,
       results,
+      leadId,
     });
     alert(
       "Em breve! Redirecionamento para WhatsApp será implementado.",
@@ -79,6 +130,10 @@ export default function App() {
     setAnswers({});
     setResults(null);
     setShowStrategic(false);
+    setLeadId(null);
+    
+    // Reset do controle de sessão para permitir novo lead_started
+    resetSessionControl();
   };
 
   return (
@@ -161,6 +216,7 @@ export default function App() {
                   answers={answers}
                   onAnswerSelect={handleAnswerSelect}
                   onPrevQuestion={handlePrevQuestion}
+                  onFinishQuiz={handleFinishQuiz}
                 />
               )}
 

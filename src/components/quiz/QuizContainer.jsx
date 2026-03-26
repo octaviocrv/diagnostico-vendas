@@ -7,11 +7,13 @@ export default function QuizContainer({
   quizStep, 
   answers, 
   onAnswerSelect, 
-  onPrevQuestion 
+  onPrevQuestion,
+  onFinishQuiz 
 }) {
   const currentQuestion = quizQuestions[quizStep - 1];
   const selectedAnswer = answers[quizStep];
   const canGoBack = quizStep > 1;
+  const isLastQuestion = quizStep >= quizQuestions.length;
 
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
@@ -29,6 +31,8 @@ export default function QuizContainer({
           onAnswerSelect={onAnswerSelect}
           onPrevQuestion={onPrevQuestion}
           canGoBack={canGoBack}
+          isLastQuestion={isLastQuestion}
+          onFinishQuiz={onFinishQuiz}
         />
       </CardContent>
     </div>

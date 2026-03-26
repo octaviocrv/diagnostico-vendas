@@ -8,6 +8,12 @@ import {
 
 export default function NextStepsCard({ captureData, onContactClick, onRestartClick }) {
   const handleContactClick = () => {
+    // Abre WhatsApp com João Rodrigues
+    const phoneNumber = "5582996164369"; // +55 82 9616-4369
+    const whatsappUrl = `https://wa.me/${phoneNumber}`;
+    window.open(whatsappUrl, "_blank");
+    
+    // Mantém callback original se existir
     if (onContactClick) {
       onContactClick();
     }

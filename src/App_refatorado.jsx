@@ -35,23 +35,45 @@ export default function App() {
   const [results, setResults] = useState(null);
   const [showStrategic, setShowStrategic] = useState(false);
   const [leadId, setLeadId] = useState(null);
+  const [isSubmittingCapture, setIsSubmittingCapture] = useState(false);
 
   const handleCaptureSubmit = async (e) => {
     e.preventDefault();
+
+    // Prevent multiple submissions
+    if (isSubmittingCapture) return;
 
     if (!captureData.nome || !captureData.email) {
       alert("Por favor, preencha nome e email para continuar.");
       return;
     }
 
-    const generatedLeadId = await trackLeadStarted(captureData);
+    setIsSubmittingCapture(true);
 
-    if (generatedLeadId) {
-      setLeadId(generatedLeadId);
+    try {
+      // Navigate immediately for better UX
+      window.scrollTo({ top: 0, behavior: "smooth" });
       setScreen("quiz");
-    } else {
-      console.error("Falha ao iniciar diagnóstico - lead_id não gerado");
-      alert("Erro interno. Tente novamente.");
+      
+      // Send webhook in background (fire-and-forget)
+      trackLeadStarted(captureData)
+        .then((generatedLeadId) => {
+          if (generatedLeadId) {
+            setLeadId(generatedLeadId);
+            console.log('Lead started tracked successfully:', generatedLeadId);
+          } else {
+            console.warn('Lead tracking failed, but continuing with quiz');
+          }
+        })
+        .catch((error) => {
+          console.error('Webhook error (non-blocking):', error);
+        })
+        .finally(() => {
+          setIsSubmittingCapture(false);
+        });
+    } catch (error) {
+      console.error('Form submission error:', error);
+      setIsSubmittingCapture(false);
     }
   };
 
@@ -96,6 +118,7 @@ export default function App() {
       leadId,
     );
 
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setScreen("result");
 
     setTimeout(() => {
@@ -129,60 +152,62 @@ export default function App() {
     setLeadId(null);
 
     resetSessionControl();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const isResultScreen = screen === "result";
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#F9F6F0] font-sans text-[#5A002B]">
+    <div className="flex min-h-[100dvh] flex-col bg-[#F9F6F0] font-sans text-[#5A002B]">
       <Header />
 
-      <main className="flex-1">
-        <div className="mx-auto flex min-h-[calc(100vh-80px)] max-w-[1400px] flex-col lg:flex-row">
-          {/* Seção Esquerda */}
-          <div className="flex w-full flex-col justify-center p-8 lg:w-1/2 lg:p-16 xl:p-24">
-            <div className="mb-10 max-w-xl">
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#FF2D8D]">
+      <main className="flex-1 flex flex-col">
+        <div className="mx-auto flex w-full flex-1 flex-col lg:flex-row max-w-[1400px]">
+          
+          {/* Seção Esquerda - Ajustada para ocupar menos altura no mobile */}
+          <div className="flex w-full flex-col justify-center px-5 py-8 sm:px-8 md:py-12 lg:w-1/2 lg:p-12 xl:p-16 2xl:p-24">
+            <div className="mb-6 md:mb-10 max-w-xl">
+              <p className="mb-2 md:mb-4 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#FF2D8D]">
                 Diagnóstico Estratégico de Crescimento
               </p>
 
-              <h1 className="text-4xl font-black leading-tight text-[#5A002B] sm:text-5xl lg:text-6xl">
+              <h1 className="text-[28px] sm:text-3xl md:text-4xl font-black leading-[1.15] text-[#5A002B] lg:text-5xl xl:text-6xl">
                 Descubra o que está travando{" "}
-                <br className="hidden lg:block" />
-                <span className="relative mt-2 inline-block text-[#FF2D8D]">
+                <br className="hidden md:block" />
+                <span className="relative mt-1 inline-block text-[#FF2D8D]">
                   o crescimento da sua empresa.
                 </span>
               </h1>
 
-              <p className="mt-6 text-lg font-normal leading-relaxed text-[#5A002B]/80">
+              <p className="mt-3 md:mt-6 text-sm sm:text-base md:text-lg font-normal leading-relaxed text-[#5A002B]/80">
                 Mapeie o nível de maturidade da sua operação, identifique
                 gargalos invisíveis e descubra onde sua empresa está perdendo
                 oportunidades de crescimento em menos de 3 minutos.
               </p>
             </div>
 
-            <div className="hidden max-w-md grid-cols-2 gap-4 lg:grid">
+            <div className="hidden max-w-md grid-cols-2 gap-4 lg:grid xl:max-w-lg">
               <img
                 src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop"
                 alt="Escritório premium"
-                className="h-40 w-full rounded-2xl object-cover opacity-90 shadow-sm"
+                className="h-32 xl:h-40 w-full rounded-2xl object-cover opacity-90 shadow-sm"
               />
               <img
                 src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&h=400&fit=crop"
                 alt="Reunião estratégica"
-                className="-mt-8 h-48 w-full rounded-2xl object-cover opacity-90 shadow-sm"
+                className="-mt-6 xl:-mt-8 h-40 xl:h-48 w-full rounded-2xl object-cover opacity-90 shadow-sm"
               />
             </div>
           </div>
 
-          {/* Seção Direita */}
+          {/* Seção Direita - Adicionado flex-1 e ajustes de padding */}
           <div
-            className="relative flex w-full items-center justify-center overflow-hidden p-6 lg:w-1/2 lg:p-12"
+            className="relative flex flex-1 w-full items-center justify-center overflow-hidden px-4 py-10 sm:p-8 lg:w-1/2 lg:p-12 xl:p-16"
             style={{
               backgroundColor: "#5A002B",
               backgroundImage: `url(${fundoCard})`,
               backgroundRepeat: "repeat",
-              backgroundSize: "220px auto",
+              backgroundSize: "200px auto",
               backgroundPosition: "center",
             }}
           >
@@ -191,13 +216,13 @@ export default function App() {
             {/* Glow de fundo para a etapa de resultado */}
             {isResultScreen && !showStrategic && (
               <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">
-                <div className="h-[460px] w-[92%] max-w-[940px] rounded-[42px] bg-[#FF2D8D]/12 blur-3xl" />
+                <div className="h-[460px] w-full max-w-[940px] rounded-[42px] bg-[#FF2D8D]/12 blur-3xl" />
               </div>
             )}
 
             {!isResultScreen && (
-              <Card className="relative z-10 w-full max-w-xl overflow-hidden rounded-[24px] border border-white/10 bg-[#6A0A36]/95 text-white shadow-2xl backdrop-blur-xl">
-                <div className="absolute -right-8 -top-8 h-32 w-32 rotate-12 opacity-20">
+              <Card className="relative z-10 w-full max-w-[400px] sm:max-w-md md:max-w-lg lg:max-w-xl overflow-hidden rounded-2xl md:rounded-[24px] border border-white/10 bg-[#6A0A36]/95 text-white shadow-2xl backdrop-blur-xl">
+                <div className="absolute -right-6 sm:-right-8 -top-6 sm:-top-8 h-24 sm:h-32 w-24 sm:w-32 rotate-12 opacity-20 pointer-events-none">
                   <img
                     src="/logoo.jpeg"
                     alt="Logo"
@@ -210,6 +235,7 @@ export default function App() {
                     captureData={captureData}
                     setCaptureData={setCaptureData}
                     onSubmit={handleCaptureSubmit}
+                    isSubmitting={isSubmittingCapture}
                   />
                 )}
 
@@ -226,7 +252,7 @@ export default function App() {
             )}
 
             {isResultScreen && (
-              <div className="relative z-10 w-full max-w-[940px]">
+              <div className="relative z-10 w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-[940px]">
                 <ResultsContainer
                   results={results}
                   showStrategic={showStrategic}

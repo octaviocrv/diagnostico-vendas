@@ -23,19 +23,30 @@ const WEBHOOK_URL = 'https://n8n-n8n.bgsl0m.easypanel.host/webhook/671d8498-8095
  */
 const sendToWebhook = async (eventData) => {
   try {
+    // Create AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 seconds timeout
+
     const response = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(eventData),
+      signal: controller.signal
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       console.warn('Webhook response não foi ok:', response.status);
     }
   } catch (error) {
-    console.error('Erro ao enviar dados para webhook:', error);
+    if (error.name === 'AbortError') {
+      console.warn('Webhook request timeout - continuing anyway');
+    } else {
+      console.error('Erro ao enviar dados para webhook:', error);
+    }
   }
 };
 

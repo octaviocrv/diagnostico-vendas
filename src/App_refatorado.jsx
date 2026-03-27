@@ -26,10 +26,11 @@ export default function App() {
   const [quizStep, setQuizStep] = useState(1);
   const [captureData, setCaptureData] = useState({
     nome: "",
+    cargo: "",
+    faturamento: "",
     email: "",
     whatsapp: "",
     empresa: "",
-    cargo: "",
   });
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState(null);

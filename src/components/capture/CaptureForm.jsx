@@ -23,7 +23,8 @@ import {
   Mail,
   Phone,
   Building2,
-  Briefcase
+  Briefcase,
+  DollarSign
 } from "lucide-react";
 
 export default function CaptureForm({ captureData, setCaptureData, onSubmit, isSubmitting = false }) {
@@ -68,7 +69,7 @@ export default function CaptureForm({ captureData, setCaptureData, onSubmit, isS
             <div className="space-y-4 md:space-y-5">
               
               {/* Nome */}
-              <div className="space-y-2">
+              <div className="flex flex-col gap-2">
                 <Label htmlFor="nome" className="text-[11px] uppercase tracking-[0.15em] text-white/40 font-semibold ml-1">
                   Nome Completo
                 </Label>
@@ -85,13 +86,68 @@ export default function CaptureForm({ captureData, setCaptureData, onSubmit, isS
                 </div>
               </div>
 
+              {/* Cargo e Faturamento - Ajustado com flex e justify-end para alinhar perfeitamente */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+                <div className="flex flex-col justify-end gap-2 h-full w-full overflow-hidden">
+                  <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40 font-semibold ml-1 truncate">
+                    Cargo
+                  </Label>
+                  <div className="relative group mt-auto w-full">
+                    <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30 group-focus-within:text-[#FF2D8D] transition-colors z-10 pointer-events-none" />
+                    <Select
+                      required
+                      value={captureData.cargo}
+                      onValueChange={(value) => setCaptureData((prev) => ({ ...prev, cargo: value }))}
+                    >
+                      {/* ADICIONADO w-full AQUI */}
+                      <SelectTrigger className="w-full h-12 sm:h-13 pl-10 sm:pl-11 text-sm sm:text-base rounded-xl border-white/5 bg-white/[0.03] text-white/90 focus:ring-1 focus:ring-[#FF2D8D]/50 transition-all duration-300">
+                        <SelectValue placeholder="Selecione seu cargo" className="text-white/20 truncate" />
+                      </SelectTrigger>
+                      <SelectContent className="border-white/10 bg-zinc-900/95 backdrop-blur-xl text-white/90 shadow-2xl rounded-xl">
+                        <SelectItem value="socio" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">Sócio / Fundador</SelectItem>
+                        <SelectItem value="ceo" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">CEO</SelectItem>
+                        <SelectItem value="diretor" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">Diretor(a)</SelectItem>
+                        <SelectItem value="gerente" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">Gerente / Head</SelectItem>
+                        <SelectItem value="outro" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">Outro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="flex flex-col justify-end gap-2 h-full w-full overflow-hidden">
+                  <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40 font-semibold ml-1 truncate">
+                    Faturamento Mensal
+                  </Label>
+                  <div className="relative group mt-auto w-full">
+                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30 group-focus-within:text-[#FF2D8D] transition-colors z-10 pointer-events-none" />
+                    <Select
+                      required
+                      value={captureData.faturamento}
+                      onValueChange={(value) => setCaptureData((prev) => ({ ...prev, faturamento: value }))}
+                    >
+                      {/* ADICIONADO w-full AQUI */}
+                      <SelectTrigger className="w-full h-12 sm:h-13 pl-10 sm:pl-11 text-sm sm:text-base rounded-xl border-white/5 bg-white/[0.03] text-white/90 focus:ring-1 focus:ring-[#FF2D8D]/50 transition-all duration-300">
+                        <SelectValue placeholder="Selecione o faturamento" className="text-white/20 truncate" />
+                      </SelectTrigger>
+                      <SelectContent className="border-white/10 bg-zinc-900/95 backdrop-blur-xl text-white/90 shadow-2xl rounded-xl">
+                        <SelectItem value="ate-10k" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">Até R$10 mil</SelectItem>
+                        <SelectItem value="10k-30k" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">De R$10 mil a R$30 mil</SelectItem>
+                        <SelectItem value="30k-100k" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">De R$30 mil a R$100 mil</SelectItem>
+                        <SelectItem value="100k-500k" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">De R$100 mil a R$500 mil</SelectItem>
+                        <SelectItem value="acima-500k" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">Acima de R$500 mil</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
               {/* Email e WhatsApp */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-[11px] uppercase tracking-[0.15em] text-white/40 font-semibold ml-1">
+                <div className="flex flex-col justify-end gap-2 h-full">
+                  <Label htmlFor="email" className="text-[11px] uppercase tracking-[0.15em] text-white/40 font-semibold ml-1 truncate">
                     E-mail Corporativo
                   </Label>
-                  <div className="relative group">
+                  <div className="relative group mt-auto">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30 group-focus-within:text-[#FF2D8D] transition-colors" />
                     <Input
                       id="email"
@@ -105,11 +161,11 @@ export default function CaptureForm({ captureData, setCaptureData, onSubmit, isS
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="whatsapp" className="text-[11px] uppercase tracking-[0.15em] text-white/40 font-semibold ml-1">
+                <div className="flex flex-col justify-end gap-2 h-full">
+                  <Label htmlFor="whatsapp" className="text-[11px] uppercase tracking-[0.15em] text-white/40 font-semibold ml-1 truncate">
                     WhatsApp
                   </Label>
-                  <div className="relative group">
+                  <div className="relative group mt-auto">
                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30 group-focus-within:text-[#FF2D8D] transition-colors" />
                     <Input
                       id="whatsapp"
@@ -125,48 +181,21 @@ export default function CaptureForm({ captureData, setCaptureData, onSubmit, isS
                 </div>
               </div>
 
-              {/* Empresa e Cargo */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
-                <div className="space-y-2">
-                  <Label htmlFor="empresa" className="text-[11px] uppercase tracking-[0.15em] text-white/40 font-semibold ml-1">
-                    Empresa
-                  </Label>
-                  <div className="relative group">
-                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30 group-focus-within:text-[#FF2D8D] transition-colors z-10" />
-                    <Input
-                      id="empresa"
-                      required
-                      value={captureData.empresa}
-                      onChange={(e) => setCaptureData((prev) => ({ ...prev, empresa: e.target.value }))}
-                      placeholder="Nome da empresa"
-                      className="h-12 sm:h-13 pl-10 sm:pl-11 text-sm sm:text-base rounded-xl border-white/5 bg-white/[0.03] text-white/90 placeholder:text-white/20 focus:bg-white/[0.05] focus:border-[#FF2D8D]/50 focus:ring-1 focus:ring-[#FF2D8D]/50 transition-all duration-300 relative"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40 font-semibold ml-1">
-                    Cargo
-                  </Label>
-                  <div className="relative group">
-                    <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30 group-focus-within:text-[#FF2D8D] transition-colors z-10 pointer-events-none" />
-                    <Select
-                      required
-                      value={captureData.cargo}
-                      onValueChange={(value) => setCaptureData((prev) => ({ ...prev, cargo: value }))}
-                    >
-                      <SelectTrigger className="h-12 sm:h-13 pl-10 sm:pl-11 text-sm sm:text-base rounded-xl border-white/5 bg-white/[0.03] text-white/90 focus:ring-1 focus:ring-[#FF2D8D]/50 transition-all duration-300">
-                        <SelectValue placeholder="Selecione seu cargo" className="text-white/20" />
-                      </SelectTrigger>
-                      <SelectContent className="border-white/10 bg-zinc-900/95 backdrop-blur-xl text-white/90 shadow-2xl rounded-xl">
-                        <SelectItem value="socio" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">Sócio / Fundador</SelectItem>
-                        <SelectItem value="ceo" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">CEO</SelectItem>
-                        <SelectItem value="diretor" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">Diretor(a)</SelectItem>
-                        <SelectItem value="gerente" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">Gerente / Head</SelectItem>
-                        <SelectItem value="outro" className="focus:bg-[#FF2D8D]/20 focus:text-white cursor-pointer rounded-lg m-1">Outro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              {/* Empresa */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="empresa" className="text-[11px] uppercase tracking-[0.15em] text-white/40 font-semibold ml-1">
+                  Empresa
+                </Label>
+                <div className="relative group">
+                  <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30 group-focus-within:text-[#FF2D8D] transition-colors z-10" />
+                  <Input
+                    id="empresa"
+                    required
+                    value={captureData.empresa}
+                    onChange={(e) => setCaptureData((prev) => ({ ...prev, empresa: e.target.value }))}
+                    placeholder="Nome da empresa"
+                    className="h-12 sm:h-13 pl-10 sm:pl-11 text-sm sm:text-base rounded-xl border-white/5 bg-white/[0.03] text-white/90 placeholder:text-white/20 focus:bg-white/[0.05] focus:border-[#FF2D8D]/50 focus:ring-1 focus:ring-[#FF2D8D]/50 transition-all duration-300 relative"
+                  />
                 </div>
               </div>
             </div>

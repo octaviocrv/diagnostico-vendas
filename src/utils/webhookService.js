@@ -69,6 +69,7 @@ const formatUserData = (captureData, leadId = null) => ({
   whatsapp: captureData.whatsapp || '',
   company: captureData.empresa || '',
   role: captureData.cargo || '',
+  faturamento_mensal: captureData.faturamento || '',
 });
 
 /**
